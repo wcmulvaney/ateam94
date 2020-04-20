@@ -1,3 +1,14 @@
+/**
+ * Filename:   Main.java
+ * Project:    a2
+ * Authors:    William Mulvaney, Xiaoyang Song, Yinzhou Zhang
+ * 			   ATeam 94
+ * 
+ * GUI template for storing and accessing Milk weights. Has multiple pages that are
+ * accessible through button objects. 
+ * 
+ */
+
 package application;
 
 import java.util.List;
@@ -16,6 +27,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Main class that runs the GUI. Uses objects inheriting from JavaFX's node 
+ * class.
+ * @author williammulvaney
+ *
+ */
 public class Main extends Application {
 	private List<String> args;
 
@@ -184,8 +201,10 @@ public class Main extends Application {
         Label labelmonrep = new Label("Enter Month");
         Button monthReportButton = new Button("Get Report!");
         
+        ComboBox<String> month1 = new ComboBox<String>();
+        month1.getItems().addAll(monthArray);
         VBox monthDisplay= new VBox();
-        monthDisplay.getChildren().addAll(Monthreport,labelyearep, insertyearep, labelmonrep, month,
+        monthDisplay.getChildren().addAll(Monthreport,labelyearep, insertyearep, labelmonrep, month1,
         		monthReportButton, backButton6);
 
         // Get Annual report
