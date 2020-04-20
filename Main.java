@@ -91,9 +91,10 @@ public class Main extends Application {
 		// File Path Text Box
 		TextField insertFile = new TextField();
 		Label filePrompt = new Label("File Path:");
+		Button addFileButton = new Button("Add File");
 
 		VBox fileText = new VBox();
-		fileText.getChildren().addAll(filePrompt, insertFile);
+		fileText.getChildren().addAll(filePrompt, insertFile, addFileButton);
 		Label fileHeader = new Label("Add File");
 
 		BorderPane fileAdd = new BorderPane();
@@ -113,6 +114,7 @@ public class Main extends Application {
 		Label monthLabel = new Label("Month:");
 		ComboBox<String> date = new ComboBox<String>();
 		Label dateLabel = new Label("Date:");
+		Button editFileButton = new Button("Edit");
 		// Month and date drop down
 		String[] monthArray = new String[12];
 		for (int i = 0; i < 12; i++)
@@ -125,7 +127,7 @@ public class Main extends Application {
 		date.getItems().addAll(dateArray);
 
 		VBox dateInsert = new VBox();
-		dateInsert.getChildren().addAll(yearLabel, year, monthLabel, month, dateLabel, date);
+		dateInsert.getChildren().addAll(yearLabel, year, monthLabel, month, dateLabel, date, editFileButton);
 		BorderPane fileEdit = new BorderPane();
 		fileEdit.setTop(fileEditHeader);
 		fileEdit.setCenter(dateInsert);
@@ -180,18 +182,20 @@ public class Main extends Application {
         TextField insertyearep = new TextField();
         Label labelyearep = new Label("Enter Year(int)");
         Label labelmonrep = new Label("Enter Month");
+        Button monthReportButton = new Button("Get Report!");
         
         VBox monthDisplay= new VBox();
-        monthDisplay.getChildren().addAll(Monthreport,labelyearep, insertyearep, labelmonrep, month, daterangebutton, 
-        		backButton6);
+        monthDisplay.getChildren().addAll(Monthreport,labelyearep, insertyearep, labelmonrep, month,
+        		monthReportButton, backButton6);
 
         // Get Annual report
         Label Annualreport = new Label("Annual report");
         TextField insertyearep1 = new TextField();
         Label labelyearep1 = new Label("Enter Years(int)");
+        Button annualReportButton = new Button("Get Report!");
        
         VBox yearDisplay = new VBox();
-        yearDisplay.getChildren().addAll(Annualreport,labelyearep1, insertyearep1, daterangebutton, backButton7);
+        yearDisplay.getChildren().addAll(Annualreport,labelyearep1, insertyearep1, annualReportButton, backButton7);
 		
 
 		// Main layout is Border Pane example (top,left,center,right,bottom)
