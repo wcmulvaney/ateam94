@@ -16,6 +16,7 @@ public class Factory {
 	private int size;
 	private int capacity;
 	private double lft;// load factor threshold
+	public String annualReport;
 
 	/**
 	 * Default Constructor
@@ -154,7 +155,6 @@ public class Factory {
 				&& farmTable[hashing(farmID)].size() != 0) {
 			for (int j = 0; j < farmTable[hashing(farmID)].size(); j++) {
 
-				// if we found that key, assign its value to "value" and then return it.
 				if (farmTable[hashing(farmID)].get(j).getFarmID().equals(farmID)) {
 					return farmTable[hashing(farmID)].get(j);
 
@@ -186,6 +186,51 @@ public class Factory {
 			}
 		}
 		return false;
+	}
+
+	public double yrWeight(double[][] list) {
+
+		double sum = 0.0;
+		for (int i = 0; i < list.length; i++) {
+			for (int j = 0; j < list[i].length; j++) {
+				sum = sum + list[i][j];
+			}
+		}
+		return sum;
+	}
+
+	public double totalWeightYr(int yr) {
+
+		double sum = 0.0;
+		for (int i = 0; i < farmTable.length; i++) {
+			if (farmTable[i] != null) {
+				for (int j = 0; j < farmTable[i].size(); j++) {
+					double[][] list = farmTable[i].get(j).get(yr);
+					sum = sum + yrWeight(list);
+
+				}
+			}
+		}
+		return sum;
+	}
+
+	public void getAnnualReport(int yr) {
+
+		String annualReport = "";
+		for (int i = 0; i < farmTable.length; i++) {
+			if (farmTable[i] != null) {
+				for (int j = 0; j < farmTable[i].size(); j++) {
+					double[][] list = farmTable[i].get(j).get(yr);
+					annualReport = farmTable[i].get(j).getFarmID() + " " + "TotalWeight: "
+							+ yrWeight(list) + "; Percent of Total Weight: "
+							+ yrWeight(list) / totalWeightYr(yr) + "\n";
+
+				}
+			}
+		}
+
+		this.annualReport = annualReport;
+
 	}
 
 }
