@@ -18,8 +18,11 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,12 +53,19 @@ public class Main extends Application {
 	private static Scene getAnnualReport;
 	private static Scene designer;
 	
+	private static Manager manager;
+	private static Factory factory;
+	
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// save args example
 		args = this.getParameters().getRaw();
 
+		factory = new Factory();
+		manager = new Manager(factory);
+		
+		
 		// Create a vertical box with Hello labels for each args
 		VBox vbox = new VBox();
 
@@ -87,6 +97,7 @@ public class Main extends Application {
 		button1.setStyle("-fx-font-size: 2em; ");
 		button1.setOnAction(e -> primaryStage.setScene(addFile));
 		
+		
 
 		Button button2 = new Button("Get Report");
 		button2.setStyle("-fx-font-size: 2em; ");
@@ -109,9 +120,24 @@ public class Main extends Application {
 		TextField insertFile = new TextField();
 		Label filePrompt = new Label("File Path:");
 		Button addFileButton = new Button("Add File");
-
+		Label fileNotFound = new Label("File not found");
 		VBox fileText = new VBox();
 		fileText.getChildren().addAll(filePrompt, insertFile, addFileButton);
+		
+			addFileButton.setOnAction( e->  {
+				try {
+					manager.readDataLineByLine(insertFile.getText());
+					if(fileText.getChildren().contains(fileNotFound)) 
+						fileText.getChildren().remove(fileNotFound);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					fileText.getChildren().add(fileNotFound);
+				}
+			});
+		
+		
+
+		
 		Label fileHeader = new Label("Add File");
 
 		BorderPane fileAdd = new BorderPane();
@@ -160,8 +186,25 @@ public class Main extends Application {
 		Label promptYr = new Label("Enter Years(int):");
 		Button buttonFR = new Button("Click here to get the report");
 		VBox vbox1 = new VBox();
-		vbox1.getChildren().addAll(title1, promptID, farmID, promptYr, yr, buttonFR, backButton3);
-
+		CheckBox checkBox1 = new CheckBox("Create File");
+		vbox1.getChildren().addAll(title1, promptID, farmID, promptYr, yr, buttonFR, checkBox1, backButton3);
+		
+		TableView table = new TableView();
+		
+		buttonFR.setOnAction(e->{
+			String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
+			if(!checkBox1.isSelected()) {
+				
+				table.getColumns().addAll(new TableColumn("Month"), new TableColumn("Total Weigth"));
+				
+			}
+			else {
+				manager.outputmonth(farmID.getText(), yr.getText());
+			}
+			
+		}	);
+			
+		
 		// Get report
 		Label title = new Label("Get Report");
 		
@@ -216,6 +259,7 @@ public class Main extends Application {
         VBox yearDisplay = new VBox();
         yearDisplay.getChildren().addAll(Annualreport,labelyearep1, insertyearep1, annualReportButton, backButton7);
 		
+        
 
 		// Main layout is Border Pane example (top,left,center,right,bottom)
 		BorderPane root = new BorderPane();
@@ -268,6 +312,18 @@ public class Main extends Application {
 	 */
 	public static void main(String[] args) {
 		launch(args);
+	}
+	
+	public static String farmData(String farmID, int year) {
+		
+		String output = "Year: " + year + "\n Month    Total weight \n";
+		for(int i = 0; i < 12; i++) {
+			int sum = 0;
+			for(int j = 0; j < 31; j++)
+				sum += factory.get(farmID).get(year)[i][j];
+			output += (i+1) +  "    : " + sum + '\n';
+		}
+		return output;
 	}
 
 }
