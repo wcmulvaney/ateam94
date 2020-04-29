@@ -32,7 +32,7 @@ public class Manager {
 //Java code to illustrate reading a 
 //CSV file line by line 
 
-  public void readDataLineByLine(String input)   { 
+ public void readDataLineByLine(String input)   { 
     
    
      try { 
@@ -72,6 +72,7 @@ public class Manager {
       }
     
        inputStream.close();
+       counter = 0;
    } 
    catch (NumberFormatException e) { 
      
@@ -127,9 +128,36 @@ public class Manager {
     
   }
 
-  public void deletefile(String filepath) {
-    File Oldfile = new File(filepath);
-    Oldfile.delete();
+  public void outputmonth(String FarmID, String year) {
+    String temp = " temp.csv";
+    File Newfile = new File(temp);
+    try {
+      FileWriter fw = new FileWriter(temp,true);
+      BufferedWriter bw = new BufferedWriter(fw);
+      PrintWriter pw = new PrintWriter(bw);
+      double totalweight = 0.0;
+      for ( int i =0; i<12; i++) {
+        int inputyear  = Integer.parseInt(year);
+       double monthweight=0.0;
+       double[][] weight =  factory.get(FarmID).get(inputyear);
+       for ( int j=0; j< weight[i].length;j++) {
+         double k = weight[i][j];
+         monthweight = monthweight +k;
+       }
+     pw.println(FarmID + "," + monthweight
+         
+         +","+ totalweight);
+      }
+      pw.flush();
+      pw.close();
+      
+      
+      
+      
+      }
+    catch (Exception e) { 
+      e.printStackTrace(); 
+  }
   }
   
 
