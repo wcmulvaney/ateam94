@@ -188,15 +188,18 @@ public class Main extends Application {
 		VBox vbox1 = new VBox();
 		CheckBox checkBox1 = new CheckBox("Create File");
 		vbox1.getChildren().addAll(title1, promptID, farmID, promptYr, yr, buttonFR, checkBox1, backButton3);
+		Label invalid = new Label("Invalid farm ID");
 		
 		TableView table = new TableView();
 		
 		buttonFR.setOnAction(e->{
 			String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
-			if(!checkBox1.isSelected()) {
+			if(input == null)
+				vbox1.getChildren().add(invalid);
+			else if(!checkBox1.isSelected()) {
 				
 				table.getColumns().addAll(new TableColumn("Month"), new TableColumn("Total Weigth"));
-				
+				vbox1.getChildren().add(table);
 			}
 			else {
 				manager.outputmonth(farmID.getText(), yr.getText());
@@ -315,12 +318,15 @@ public class Main extends Application {
 	}
 	
 	public static String farmData(String farmID, int year) {
-		
+		if(factory.get(farmID) == null)
+			return null;
 		String output = "Year: " + year + "\n Month    Total weight \n";
 		for(int i = 0; i < 12; i++) {
 			int sum = 0;
-			for(int j = 0; j < 31; j++)
-				sum += factory.get(farmID).get(year)[i][j];
+			for(int j = 0; j < 31; j++) {
+				
+					sum += factory.get(farmID).get(year)[i][j];
+			}
 			output += (i+1) +  "    : " + sum + '\n';
 		}
 		return output;
