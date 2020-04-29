@@ -24,6 +24,11 @@ public class Manager {
       factory =fac;
       counter =0;
   }
+  public Manager(Factory fac){
+
+      factory =fac;
+      counter =0;
+  }
 //Java code to illustrate reading a 
 //CSV file line by line 
 
