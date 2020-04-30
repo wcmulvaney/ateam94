@@ -278,12 +278,13 @@ public class Main extends Application {
 		TextField insertenddate = new TextField();
 		Label labelenddate = new Label("Enter End Date");
 		Button daterangebutton = new Button("Get report!");
-
+		TableView<FarmAnnual> table3 = new TableView();
 		VBox daterange = new VBox();
 		daterange.getChildren().addAll(DateRange, labeldat, insertdat, labelenddate,
 				insertenddate, daterangebutton, backButton5);
+		Label invalid4 = new Label("Invalid farmID or date range");
 		
-		daterangebutton.setOnAction(e -> {
+		daterangebutton.setOnAction(e -> { try {
 
 			int d1 = Integer.parseInt(insertdat.getText().substring(0, 2));
 			int m1 = Integer.parseInt(insertdat.getText().substring(2, 4));
@@ -297,6 +298,35 @@ public class Main extends Application {
 			ArrayList<String> farmIDListDR = factory.farmIDListDR;
 			ArrayList<Double> totalWeightDR = factory.totalWeightDR;
 			ArrayList<Double> PercentageDR = factory.PercentageDR;
+			
+			TableColumn idColumn = new TableColumn("FarmID");
+			idColumn.setCellValueFactory(
+					new PropertyValueFactory<Month, String>("farmID"));
+			// Second column
+			TableColumn totalColumn = new TableColumn("Total Weight");
+			totalColumn.setCellValueFactory(
+					new PropertyValueFactory<Month, String>("totalWeight"));
+
+			// Third column
+			TableColumn percentageColumn = new TableColumn("Percentage");
+			percentageColumn.setCellValueFactory(
+					new PropertyValueFactory<FarmMonth, String>("percentage"));
+			
+			table3.getItems().clear();
+			
+			table3.getColumns().addAll(idColumn, totalColumn, percentageColumn);
+			
+			for(int i = 0; i < farmIDListDR.size(); i++) {
+				table3.getItems().add(
+						new FarmAnnual(farmIDListDR.get(i), totalWeightDR.get(i), PercentageDR.get(i)));
+				
+			}
+			
+			daterange.getChildren().add(table3);
+			
+		} catch(Exception f) {
+			daterange.getChildren().add(invalid4);
+		}
 
 		});
 		
@@ -314,7 +344,7 @@ public class Main extends Application {
 		VBox monthDisplay = new VBox();
 		monthDisplay.getChildren().addAll(Monthreport, labelyearep, insertyearep,
 				labelmonrep, month1, monthReportButton, checkBox2, backButton6);
-		
+		TableView<FarmMonth> table1 = new TableView<FarmMonth>();
 		monthReportButton.setOnAction(e -> {
 			if(monthDisplay.getChildren().contains(invalid2))
 				monthDisplay.getChildren().remove(invalid2);
@@ -323,7 +353,7 @@ public class Main extends Application {
 				factory.getMonthlyReport(Integer.parseInt(insertyearep.getText()),
 						Integer.parseInt(month1.getValue()));
 				
-				TableView<FarmMonth> table1 = new TableView<FarmMonth>();
+				
 				// If user has not selected box print table
 				if (!checkBox2.isSelected()) {
 					// First column
@@ -416,7 +446,10 @@ public class Main extends Application {
 					table2.setItems(list);
 					yearDisplay.getChildren().add(table2);
 				} else {
-		// 			manager.(farmID.getText(), yr.getText());
+		// 			
+		//    Make file instead			
+		//			
+		//			manager.(farmID.getText(), yr.getText());
 				}
 			} catch (Exception f) {
 
