@@ -1,6 +1,6 @@
 /*
  * Filename:   Main.java
- * Project:    a2
+ * Project:    aTeam Final Project
  * Authors:    William Mulvaney, Xiaoyang Song, Yinzhou Zhang
  * 			   ATeam 94
  * 
