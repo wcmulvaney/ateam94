@@ -182,10 +182,12 @@ public void readDataLineByLine(String input) throws Exception   {
       FileWriter fw = new FileWriter(temp,true);
       BufferedWriter bw = new BufferedWriter(fw);
       PrintWriter pw = new PrintWriter(bw);
+      // set print io
       double totalweight = 0.0;
       for ( int i =0; i<12; i++) {
         int inputyear  = Integer.parseInt(year);
        double monthweight=0.0;
+        // get weight for each month 
        double[][] weight =  factory.get(FarmID).get(inputyear);
        for ( int j=0; j< weight[i].length;j++) {
          double k = weight[i][j];
