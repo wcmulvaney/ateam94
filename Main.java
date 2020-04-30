@@ -194,20 +194,32 @@ public class Main extends Application {
 
 		TableView table = new TableView();
 
-		buttonFR.setOnAction(e -> {
-			String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
-			if (input == null)
-				vbox1.getChildren().add(invalid);
-			else if (!checkBox1.isSelected()) {
-
-				table.getColumns().addAll(new TableColumn("Month"),
-						new TableColumn("Total Weigth"));
-				vbox1.getChildren().add(table);
-			} else {
-				manager.outputmonth(farmID.getText(), yr.getText());
-			}
-
-		});
+		buttonFR.setOnAction(e->{ 
+			try {
+				String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
+				if(input == null) {				
+					vbox1.getChildren().add(invalid);
+				}
+				else if(!checkBox1.isSelected()) {
+					TableColumn monthColumn = new TableColumn("Month");	
+					monthColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("month"));
+					
+					TableColumn totalColumn = new TableColumn("Total Weight");
+					totalColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("totalWeight"));
+					if(table.getItems().size() == 0) {
+						table.getColumns().addAll(monthColumn, totalColumn);
+						table.setItems(FXCollections.observableArrayList(new Month(1, 50, 5), new Month(1, 50, 5), new Month(1, 50, 5)));
+					}
+					vbox1.getChildren().add(table);
+				}
+				else {
+					manager.outputmonth(farmID.getText(), yr.getText());
+				}
+			
+			} catch(Exception f) {
+			
+		}
+		}	);
 
 		// Get report
 		Label title = new Label("Get Report");
@@ -251,6 +263,41 @@ public class Main extends Application {
 		ComboBox<String> month1 = new ComboBox<String>();
 		month1.getItems().addAll(monthArray);
 		VBox monthDisplay = new VBox();
+		monthReportButton.setOnAction(e -> 	{
+        	try {
+			String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
+			if(input == null) {				
+				vbox1.getChildren().add(invalid);
+			}
+			else if(!checkBox1.isSelected()) {
+				TableColumn IDColumn = new TableColumn("FarmID");	
+				monthColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("farmID"));
+				
+				TableColumn totalColumn = new TableColumn("Total Weight");
+				totalColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("totalWeight"));
+				
+				TableColumn percentageColumn = new TableColumn("Total Weight");
+				totalColumn.setCellValueFactory(new PropertyValueFactory<FarmMonth, String>("totalWeight"));
+				
+				if(table.getItems().size() == 0) {
+					table.getColumns().addAll(monthColumn, totalColumn);
+					//
+					// Add a for loop that runs through and creates a new FarmMonth object
+					// that is added to an obsevable list that is added to table at the end
+					//
+					//
+					table.setItems(FXCollections.observableArrayList(new Month(1, 50, 5), new Month(1, 50, 5), new Month(1, 50, 5)));
+				}
+				vbox1.getChildren().add(table);
+				
+		}
+		else {
+			manager.outputmonth(farmID.getText(), yr.getText());
+		}
+	} catch(Exception f) {
+		
+		}
+        });
 		monthDisplay.getChildren().addAll(Monthreport, labelyearep, insertyearep,
 				labelmonrep, month1, monthReportButton, backButton6);
 
@@ -352,5 +399,94 @@ public class Main extends Application {
 		}
 		return output;
 	}
+	public static String farmData(String farmID, int year) {
+		if(factory.get(farmID) == null)
+			return null;
+		String output = "Year: " + year + "\n Month    Total weight \n";
+		for(int i = 0; i < 12; i++) {
+			int sum = 0;
+			for(int j = 0; j < 31; j++) {
+				
+					sum += factory.get(farmID).get(year)[i][j];
+			}
+			output += (i+1) +  "    : " + sum + '\n';
+		}
+		return output;
+	}
+	
+	public class Month {
+		String month;
+		String totalWeight;
+		String percentage;
+		int total;
+		
+		public Month(int month, int totalWeight, int total) {
+			this.month = Integer.toString(month);
+			this.totalWeight = Integer.toString(totalWeight);
+			this.total = total;
+			this.percentage = "";
+		
+		}
 
+		/**
+		 * @return the month
+		 */
+		public String getMonth() {
+			return month;
+		}
+
+		/**
+		 * @param month the month to set
+		 */
+		public void setMonth(String month) {
+			this.month = month;
+		}
+
+		/**
+		 * @return the totalWeight
+		 */
+		public String getTotalWeight() {
+			return totalWeight;
+		}
+
+		/**
+		 * @param totalWeight the totalWeight to set
+		 */
+		public void setTotalWeight(String totalWeight) {
+			this.totalWeight = totalWeight;
+		}
+
+		/**
+		 * @return the percentage
+		 */
+		public String getPercentage() {
+			return percentage;
+		}
+
+		/**
+		 * @param percentage the percentage to set
+		 */
+		public void setPercentage(String percentage) {
+			this.percentage = percentage;
+		}
+
+		/**
+		 * @return the total
+		 */
+		public int getTotal() {
+			return total;
+		}
+
+		/**
+		 * @param total the total to set
+		 */
+		public void setTotal(int total) {
+			this.total = total;
+		}
+		
+	}
 }
+	
+}
+
+
