@@ -142,45 +142,48 @@ public class Main extends Application {
 		fileAdd.setTop(fileHeader);
 		fileAdd.setBottom(backButton1);
 
-		// Edit File Page
-        Label fileEditHeader = new Label("Edit File");
-        TextField farmid = new TextField();
-        Label farmis = new Label("Farm ID");
-        // Year field
-   
-        // Year field
-        TextField year = new TextField();
-        Label yearLabel = new Label("Year:");
-        // Create a drop-down ComboBox
-        TextField month = new TextField();;
-        Label monthLabel = new Label("Month:");
-        TextField date = new TextField();
-        Label dateLabel = new Label("Date:");
-        TextField weight = new TextField();
-        Label weightLabel = new Label("Weight:");
-        Button editFileButton = new Button("Edit");
-        // Month and date drop down
-        String[] monthArray = new String[12];
-        for (int i = 0; i < 12; i++)
-            monthArray[i] = "" + (i + 1);
-        String[] dateArray = new String[31];
-        for (int i = 0; i < 31; i++)
-            dateArray[i] = "" + (i + 1);
+	  // Edit File Page
+      Label fileEditHeader = new Label("Edit File");
+      TextField farmid = new TextField();
+      Label farmis = new Label("Farm ID");
+      // Year field
+ 
+      // Year field
+      TextField year = new TextField();
+      Label yearLabel = new Label("Year:");
+      // Create a drop-down ComboBox
+      TextField month = new TextField();;
+      Label monthLabel = new Label("Month:");
+      TextField date = new TextField();
+      Label dateLabel = new Label("Date:");
+      TextField weight = new TextField();
+      Label weightLabel = new Label("Weight:");
+      Button editFileButton = new Button("Edit");
+      // Month and date drop down
+      String[] monthArray = new String[12];
+      for (int i = 0; i < 12; i++)
+          monthArray[i] = "" + (i + 1);
+      String[] dateArray = new String[31];
+      for (int i = 0; i < 31; i++)
+          dateArray[i] = "" + (i + 1);
+      
+      
+      editFileButton.setOnAction( e->{
         String filepath = year.getText()+"-"+  month.getText()+".csv";
-        editFileButton.setOnAction( e->{
-          try { manager.writeRecord(year.getText(),  month.getText(), date.getText(), farmid.getText(),weight.getText(), filepath);
-        }
-          catch (Exception e1) {
-            // TODO Auto-generated catch block
-            fileText.getChildren().add(fileNotFound);
-        }
-        });
-        VBox dateInsert = new VBox();
-        dateInsert.getChildren().addAll(farmis, farmid,yearLabel, year, monthLabel, month, dateLabel, date, weightLabel, weight,editFileButton);
-        BorderPane fileEdit = new BorderPane();
-        fileEdit.setTop(fileEditHeader);
-        fileEdit.setCenter(dateInsert);
-        fileEdit.setBottom(backButton2);
+        System.out.print(filepath);
+        try { manager.writeRecord(year.getText(),  month.getText(), date.getText(), farmid.getText(),weight.getText(), filepath);
+      }
+        catch (Exception e1) {
+          // TODO Auto-generated catch block
+          fileText.getChildren().add(fileNotFound);
+      }
+      });
+      VBox dateInsert = new VBox();
+      dateInsert.getChildren().addAll(farmis, farmid,yearLabel, year, monthLabel, month, dateLabel, date, weightLabel, weight,editFileButton);
+      BorderPane fileEdit = new BorderPane();
+      fileEdit.setTop(fileEditHeader);
+      fileEdit.setCenter(dateInsert);
+      fileEdit.setBottom(backButton2);
 
 		// Farm Report
 		Label title1 = new Label("Get Farm Report");
