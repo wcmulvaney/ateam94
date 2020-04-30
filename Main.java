@@ -195,7 +195,7 @@ public class Main extends Application {
 				checkBox1, backButton3);
 		Label invalid = new Label("Invalid farm ID");
 
-		TableView table = new TableView();
+		TableView<Month> table = new TableView();
 
 		buttonFR.setOnAction(e -> {
 			try {
@@ -400,6 +400,7 @@ public class Main extends Application {
 		Button annualReportButton = new Button("Get Report!");
 		CheckBox checkBox3 = new CheckBox("Create File");
 		VBox yearDisplay = new VBox();
+		TableView<FarmAnnual> table2 = new TableView<FarmAnnual>();
 		yearDisplay.getChildren().addAll(Annualreport, labelyearep1, insertyearep1,
 				annualReportButton, checkBox3, backButton7);
 		
@@ -409,7 +410,7 @@ public class Main extends Application {
 		//		get Year information
 				//
 				
-				TableView<FarmAnnual> table2 = new TableView<FarmAnnual>();
+				
 				// If user has not selected box print table
 				if (!checkBox3.isSelected()) {
 					// First column
