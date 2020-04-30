@@ -140,47 +140,35 @@ public class Main extends Application {
 		fileAdd.setTop(fileHeader);
 		fileAdd.setBottom(backButton1);
 
-		
-        // Edit File Page
-        Label fileEditHeader = new Label("Edit File");
-        TextField farmid = new TextField();
-        Label farmis = new Label("Farm ID");
-        // Year field
-   
-        // Year field
-        TextField year = new TextField();
-        Label yearLabel = new Label("Year:");
-        // Create a drop-down ComboBox
-        TextField month = new TextField();;
-        Label monthLabel = new Label("Month:");
-        TextField date = new TextField();
-        Label dateLabel = new Label("Date:");
-        TextField weight = new TextField();
-        Label weightLabel = new Label("Weight:");
-        Button editFileButton = new Button("Edit");
-        // Month and date drop down
-        String[] monthArray = new String[12];
-        for (int i = 0; i < 12; i++)
-            monthArray[i] = "" + (i + 1);
-        String[] dateArray = new String[31];
-        for (int i = 0; i < 31; i++)
-            dateArray[i] = "" + (i + 1);
-        String filepath = year.getText()+"-"+  month.getText()+".csv";
-        editFileButton.setOnAction( e->{
-          try { manager.writeRecord(year.getText(),  month.getText(), date.getText(), farmid.getText(),weight.getText(), filepath);
-        }
-          catch (Exception e1) {
-            // TODO Auto-generated catch block
-            fileText.getChildren().add(fileNotFound);
-        }
-        });
-        VBox dateInsert = new VBox();
-        dateInsert.getChildren().addAll(farmis, farmid,yearLabel, year, monthLabel, month, dateLabel, date, weightLabel, weight,editFileButton);
-        BorderPane fileEdit = new BorderPane();
-        fileEdit.setTop(fileEditHeader);
-        fileEdit.setCenter(dateInsert);
-        fileEdit.setBottom(backButton2);
+		// Edit File Page
+		Label fileEditHeader = new Label("Edit File");
+		// Year field
+		TextField year = new TextField();
+		Label yearLabel = new Label("Year:");
+		// Create a drop-down ComboBox
+		ComboBox<String> month = new ComboBox<String>();
+		Label monthLabel = new Label("Month:");
+		ComboBox<String> date = new ComboBox<String>();
+		Label dateLabel = new Label("Date:");
+		Button editFileButton = new Button("Edit");
+		// Month and date drop down
+		String[] monthArray = new String[12];
+		for (int i = 0; i < 12; i++)
+			monthArray[i] = "" + (i + 1);
+		String[] dateArray = new String[31];
+		for (int i = 0; i < 31; i++)
+			dateArray[i] = "" + (i + 1);
 
+		month.getItems().addAll(monthArray);
+		date.getItems().addAll(dateArray);
+
+		VBox dateInsert = new VBox();
+		dateInsert.getChildren().addAll(yearLabel, year, monthLabel, month,
+				dateLabel, date, editFileButton);
+		BorderPane fileEdit = new BorderPane();
+		fileEdit.setTop(fileEditHeader);
+		fileEdit.setCenter(dateInsert);
+		fileEdit.setBottom(backButton2);
 
 		// Farm Report
 		Label title1 = new Label("Get Farm Report");
@@ -197,32 +185,20 @@ public class Main extends Application {
 
 		TableView table = new TableView();
 
-		buttonFR.setOnAction(e->{ 
-			try {
-				String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
-				if(input == null) {				
-					vbox1.getChildren().add(invalid);
-				}
-				else if(!checkBox1.isSelected()) {
-					TableColumn monthColumn = new TableColumn("Month");	
-					monthColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("month"));
-					
-					TableColumn totalColumn = new TableColumn("Total Weight");
-					totalColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("totalWeight"));
-					if(table.getItems().size() == 0) {
-						table.getColumns().addAll(monthColumn, totalColumn);
-						table.setItems(FXCollections.observableArrayList(new Month(1, 50, 5), new Month(1, 50, 5), new Month(1, 50, 5)));
-					}
-					vbox1.getChildren().add(table);
-				}
-				else {
-					manager.outputmonth(farmID.getText(), yr.getText());
-				}
-			
-			} catch(Exception f) {
-			
-		}
-		}	);
+		buttonFR.setOnAction(e -> {
+			String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
+			if (input == null)
+				vbox1.getChildren().add(invalid);
+			else if (!checkBox1.isSelected()) {
+
+				table.getColumns().addAll(new TableColumn("Month"),
+						new TableColumn("Total Weigth"));
+				vbox1.getChildren().add(table);
+			} else {
+				manager.outputmonth(farmID.getText(), yr.getText());
+			}
+
+		});
 
 		// Get report
 		Label title = new Label("Get Report");
@@ -266,41 +242,6 @@ public class Main extends Application {
 		ComboBox<String> month1 = new ComboBox<String>();
 		month1.getItems().addAll(monthArray);
 		VBox monthDisplay = new VBox();
-		monthReportButton.setOnAction(e -> 	{
-        	try {
-			String input = farmData(farmID.getText(), Integer.parseInt(yr.getText()));
-			if(input == null) {				
-				vbox1.getChildren().add(invalid);
-			}
-			else if(!checkBox1.isSelected()) {
-				TableColumn IDColumn = new TableColumn("FarmID");	
-				monthColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("farmID"));
-				
-				TableColumn totalColumn = new TableColumn("Total Weight");
-				totalColumn.setCellValueFactory(new PropertyValueFactory<Month, String>("totalWeight"));
-				
-				TableColumn percentageColumn = new TableColumn("Total Weight");
-				totalColumn.setCellValueFactory(new PropertyValueFactory<FarmMonth, String>("totalWeight"));
-				
-				if(table.getItems().size() == 0) {
-					table.getColumns().addAll(monthColumn, totalColumn);
-					//
-					// Add a for loop that runs through and creates a new FarmMonth object
-					// that is added to an obsevable list that is added to table at the end
-					//
-					//
-					table.setItems(FXCollections.observableArrayList(new Month(1, 50, 5), new Month(1, 50, 5), new Month(1, 50, 5)));
-				}
-				vbox1.getChildren().add(table);
-				
-		}
-		else {
-			manager.outputmonth(farmID.getText(), yr.getText());
-		}
-	} catch(Exception f) {
-		
-		}
-        });
 		monthDisplay.getChildren().addAll(Monthreport, labelyearep, insertyearep,
 				labelmonrep, month1, monthReportButton, backButton6);
 
@@ -402,94 +343,5 @@ public class Main extends Application {
 		}
 		return output;
 	}
-	public static String farmData(String farmID, int year) {
-		if(factory.get(farmID) == null)
-			return null;
-		String output = "Year: " + year + "\n Month    Total weight \n";
-		for(int i = 0; i < 12; i++) {
-			int sum = 0;
-			for(int j = 0; j < 31; j++) {
-				
-					sum += factory.get(farmID).get(year)[i][j];
-			}
-			output += (i+1) +  "    : " + sum + '\n';
-		}
-		return output;
-	}
-	
-	public class Month {
-		String month;
-		String totalWeight;
-		String percentage;
-		int total;
-		
-		public Month(int month, int totalWeight, int total) {
-			this.month = Integer.toString(month);
-			this.totalWeight = Integer.toString(totalWeight);
-			this.total = total;
-			this.percentage = "";
-		
-		}
 
-		/**
-		 * @return the month
-		 */
-		public String getMonth() {
-			return month;
-		}
-
-		/**
-		 * @param month the month to set
-		 */
-		public void setMonth(String month) {
-			this.month = month;
-		}
-
-		/**
-		 * @return the totalWeight
-		 */
-		public String getTotalWeight() {
-			return totalWeight;
-		}
-
-		/**
-		 * @param totalWeight the totalWeight to set
-		 */
-		public void setTotalWeight(String totalWeight) {
-			this.totalWeight = totalWeight;
-		}
-
-		/**
-		 * @return the percentage
-		 */
-		public String getPercentage() {
-			return percentage;
-		}
-
-		/**
-		 * @param percentage the percentage to set
-		 */
-		public void setPercentage(String percentage) {
-			this.percentage = percentage;
-		}
-
-		/**
-		 * @return the total
-		 */
-		public int getTotal() {
-			return total;
-		}
-
-		/**
-		 * @param total the total to set
-		 */
-		public void setTotal(int total) {
-			this.total = total;
-		}
-		
-	}
 }
-	
-}
-
-
