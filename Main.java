@@ -292,11 +292,14 @@ public class Main extends Application {
 		ComboBox<String> month1 = new ComboBox<String>();
 		CheckBox checkBox2 = new CheckBox("Create File");
 		month1.getItems().addAll(monthArray);
+		Label invalid2 = new Label("Invalid farm");
 		VBox monthDisplay = new VBox();
 		monthDisplay.getChildren().addAll(Monthreport, labelyearep, insertyearep,
 				labelmonrep, month1, monthReportButton, checkBox2, backButton6);
-
+		
 		monthReportButton.setOnAction(e -> {
+			if(monthDisplay.getChildren().contains(invalid2))
+				monthDisplay.getChildren().remove(invalid2);
 			try {
 				// Table that will hold month information
 				factory.getMonthlyReport(Integer.parseInt(insertyearep.getText()),
@@ -338,7 +341,7 @@ public class Main extends Application {
 					manager.outputmonth(farmID.getText(), yr.getText());
 				}
 			} catch (Exception f) {
-
+				monthDisplay.getChildren().add(invalid2);
 			}
 		});
 
