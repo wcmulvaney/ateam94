@@ -317,5 +317,70 @@ public class Factory {
 	
 	
 	
+    public void getdaterange(int yr,int month, int date, int month1,int day1) {
 
+      String annualReport = "";
+      ArrayList<String> farmIDList = new ArrayList<String>();
+      ArrayList<Double> totalWeightList = new ArrayList<Double>();
+      ArrayList<Double> percentageList = new ArrayList<Double>();
+      for (int i = 0; i < farmTable.length; i++) {
+        if (farmTable[i] != null) {
+            for (int j = 0; j < farmTable[i].size(); j++) {
+              
+                double[][] list = farmTable[i].get(j).get(yr);
+                System.out.println(list[10][11]);
+                System.out.println(list[10][3]);
+                for(int k=0;k<month-2;k++) {
+                  for( int h =0;h< list[k].length; h++) {
+                  
+                    list[k][h]=0.0;
+                  }
+                }
+               for(int k=0;k<month-1;k++) {
+                 for( int h =0;h< date-1; h++) {
+                   System.out.print(h);
+                   System.out.print(k);
+                   list[k][h]=0.0;
+                 }
+               }
+               for(int k=11;k>month1-1;k--) {
+                 for( int h =0;h< list[k].length; h++) {
+           
+                
+                   
+                   list[k][h]=0.0;
+                 }
+               }
+               for(int k=11;k>month1-2;k--) {
+                 for( int h =list[k].length-1;h> day1-1; h--) {
+           
+                   
+                   
+                   list[k][h]=0.0;
+                 }
+               }
+               System.out.println(list[10][11]);
+               System.out.println(list[10][3]);
+                farmIDList.add(farmTable[i].get(j).getFarmID());
+                totalWeightList.add(yrWeight(list));
+                percentageList.add(yrWeight(list) / totalWeightYr(yr));
+                
+                annualReport = annualReport + farmTable[i].get(j).getFarmID() + " "
+                        + "TotalWeight: " + yrWeight(list) + "; Percent of Total Weight: "
+                        + yrWeight(list) / totalWeightYr(yr) + "\n";
+
+            }
+        }
+    }
+
+
+      this.annualReport = annualReport;
+      farmIDListAnnual = farmIDList;
+      totalWeightAnnual = totalWeightList;
+      PercentageAnnual = percentageList;
+      
+
+      System.out.println(this.annualReport);
+
+  }
 }
