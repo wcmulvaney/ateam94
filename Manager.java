@@ -46,7 +46,7 @@ public class Manager {
    /**
    *Java code to illustrate reading a 
    * CSV file line by line 
-   * @param farmID
+   * @string filepath filepath that get to the file
    */
 public void readDataLineByLine(String input) throws Exception   { 
     
@@ -104,29 +104,43 @@ public void readDataLineByLine(String input) throws Exception   {
      
 
   } 
+    /**
+   *Java code to revise a
+   * CSV file line by line 
+   * @string year year that need to change
+   * @string weight weight that need to changed
+   * @string month month that nned to change
+   * @string day day that need to change
+   * @string filepath filepath that get to the file
+   
+   */
   public void writeRecord(String year, String month, String day, String farmID, String weight, String filepath) {
     String temp = " temp.csv";
     String thisdate = year + "-" + month + "-" + day;
     File Oldfile = new File(filepath);
     File Newfile = new File(temp);
-
-
+    //create old file and new file to copy information
     try {
       revise =false;
       FileWriter fw = new FileWriter(temp,true);
       BufferedWriter bw = new BufferedWriter(fw);
       PrintWriter pw = new PrintWriter(bw);
       Scanner inputStream = new Scanner(Oldfile);
+      
       while(inputStream.hasNext()) {
         String data = inputStream.nextLine();
+        // get each line information with the import
         String[] values = data.split(",");
        {
        String[] date = values[0].split("-");
        if(date[0].equals(year)&&date[1].equals(month)&&date[2].equals(day)&&values[1].equals(farmID)) {
-         pw.println(thisdate + "," + farmID + "," + weight); 
+         // if information matched
+         pw.println(thisdate + "," + farmID + "," + weight);
+         // print revise information
          revise = true;
        }
        else {
+         // print origin information
          pw.println(data);
        }
     }
@@ -151,7 +165,16 @@ public void readDataLineByLine(String input) throws Exception   {
 
 
   }
-
+    /**
+   *Java code to revise a
+   * CSV file line by line 
+   * @string year year that need to change
+   * @string weight weight that need to changed
+   * @string month month that nned to change
+   * @string day day that need to change
+   * @string filepath filepath that get to the file
+   
+   */
   public void outputmonth(String FarmID, String year) {
     String temp = " temp.csv";
     File Newfile = new File(temp);
