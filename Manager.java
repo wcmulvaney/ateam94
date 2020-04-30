@@ -32,55 +32,13 @@ public class Manager {
 //Java code to illustrate reading a 
 //CSV file line by line 
 
- public void writeRecord(String year, String month, String day, String farmID, String weight, String filepath) throws Exception {
-    String temp = " temp.csv";
-    String thisdate = year + "-" + month + "-" + day;
-    File Oldfile = new File(filepath);
-    File Newfile = new File(temp);
-    
-    
-    try {
-      FileWriter fw = new FileWriter(temp,true);
-      BufferedWriter bw = new BufferedWriter(fw);
-      PrintWriter pw = new PrintWriter(bw);
-      Scanner inputStream = new Scanner(Oldfile);
-      while(inputStream.hasNext()) {
-        String data = inputStream.nextLine();
-        String[] values = data.split(",");
-     if( counter >0) {
-       String[] date = values[0].split("-");
-       if(date[0].equals(year)&&date[1].equals(month)&&date[2].equals(day)&&values[1].equals(farmID)) {
-         pw.println(thisdate + "," + farmID + "," + weight); 
-       }
-       else {
-         pw.println(data);
-       }
-    }
-     }
-      inputStream.close();
-      pw.flush();
-      pw.close();
-      
-      Oldfile.delete();
-      File Oldfile1 = new File(filepath);
-      Oldfile1.delete();
-      File dump = new File(filepath);
-      Newfile.renameTo(dump);
-      
-      }
-    catch (Exception e) { 
-    throw  e;
-  }
-
-    
-  }
   public void writeRecord(String year, String month, String day, String farmID, String weight, String filepath) {
     String temp = " temp.csv";
     String thisdate = year + "-" + month + "-" + day;
     File Oldfile = new File(filepath);
     File Newfile = new File(temp);
-    
-    
+
+
     try {
       FileWriter fw = new FileWriter(temp,true);
       BufferedWriter bw = new BufferedWriter(fw);
@@ -98,24 +56,28 @@ public class Manager {
          pw.println(data);
        }
     }
-     }
-      inputStream.close();
+     counter = counter +1;
+      }
+    
+       inputStream.close();
+       counter = 0;
       pw.flush();
       pw.close();
-      
+
       Oldfile.delete();
       File Oldfile1 = new File(filepath);
       Oldfile1.delete();
       File dump = new File(filepath);
       Newfile.renameTo(dump);
-      
+
       }
     catch (Exception e) { 
       e.printStackTrace(); 
   }
 
-    
+
   }
+
 
   public void outputmonth(String FarmID, String year) {
     String temp = " temp.csv";
