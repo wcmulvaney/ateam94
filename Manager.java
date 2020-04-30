@@ -14,6 +14,9 @@ import java.util.Scanner;
 public class Manager {
   private  Factory factory;
   private int counter;
+  private int monthcounter ;
+  private int yearcounter;
+  private boolean revise;
   /**
    * Constructor to create a factory object. Takes in a String that can be used to 
    * identify farm.
@@ -21,13 +24,19 @@ public class Manager {
    */
   public Manager(){
     Factory fac  = new Factory(); 
+    monthcounter=0;
+    yearcounter=0;
       factory =fac;
       counter =0;
+      revise = false;
   }
+  
   public Manager(Factory fac){
-
+    monthcounter=0;
+    yearcounter=0;
       factory =fac;
       counter =0;
+      revise = false;
   }
 //Java code to illustrate reading a 
 //CSV file line by line 
@@ -84,51 +93,53 @@ public void readDataLineByLine(String input) throws Exception   {
      
 
   } 
- public void writeRecord(String year, String month, String day, String farmID, String weight, String filepath) throws Exception {
-   String temp = " temp.csv";
-   String thisdate = year + "-" + month + "-" + day;
-   File Oldfile = new File(filepath);
-   File Newfile = new File(temp);
+  public void writeRecord(String year, String month, String day, String farmID, String weight, String filepath) {
+    String temp = " temp.csv";
+    String thisdate = year + "-" + month + "-" + day;
+    File Oldfile = new File(filepath);
+    File Newfile = new File(temp);
 
 
-   try {
-     FileWriter fw = new FileWriter(temp,true);
-     BufferedWriter bw = new BufferedWriter(fw);
-     PrintWriter pw = new PrintWriter(bw);
-     Scanner inputStream = new Scanner(Oldfile);
-     while(inputStream.hasNext()) {
-       String data = inputStream.nextLine();
-       String[] values = data.split(",");
-    if( counter >0) {
-      String[] date = values[0].split("-");
-      if(date[0].equals(year)&&date[1].equals(month)&&date[2].equals(day)&&values[1].equals(farmID)) {
-        pw.println(thisdate + "," + farmID + "," + weight); 
+    try {
+      revise =false;
+      FileWriter fw = new FileWriter(temp,true);
+      BufferedWriter bw = new BufferedWriter(fw);
+      PrintWriter pw = new PrintWriter(bw);
+      Scanner inputStream = new Scanner(Oldfile);
+      while(inputStream.hasNext()) {
+        String data = inputStream.nextLine();
+        String[] values = data.split(",");
+       {
+       String[] date = values[0].split("-");
+       if(date[0].equals(year)&&date[1].equals(month)&&date[2].equals(day)&&values[1].equals(farmID)) {
+         pw.println(thisdate + "," + farmID + "," + weight); 
+         revise = true;
+       }
+       else {
+         pw.println(data);
+       }
+    }
+    
       }
-      else {
-        pw.println(data);
+    
+       inputStream.close();
+       
+      pw.flush();
+      pw.close();
+
+      Oldfile.delete();
+      File Oldfile1 = new File(filepath);
+      Oldfile1.delete();
+      File dump = new File(filepath);
+      Newfile.renameTo(dump);
+
       }
-   }
-    counter = counter +1;
-     }
-   
-      inputStream.close();
-      counter = 0;
-     pw.flush();
-     pw.close();
-
-     Oldfile.delete();
-     File Oldfile1 = new File(filepath);
-     Oldfile1.delete();
-     File dump = new File(filepath);
-     Newfile.renameTo(dump);
-
-     }
-   catch (Exception e) { 
-    throw e;
- }
+    catch (Exception e) { 
+      e.printStackTrace(); 
+  }
 
 
- }
+  }
 
   public void outputmonth(String FarmID, String year) {
     String temp = " temp.csv";
