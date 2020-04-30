@@ -170,9 +170,10 @@ public class Main extends Application {
 		String[] dateArray = new String[31];
 		for (int i = 0; i < 31; i++)
 			dateArray[i] = "" + (i + 1);
-		String filepath = year.getText() + "-" + month.getText() + ".csv";
+		
 		editFileButton.setOnAction(e -> {
 			try {
+				String filepath = year.getText() + "-" + month.getText() + ".csv";
 				manager.writeRecord(year.getText(), month.getText(), date.getText(),
 						farmid.getText(), weight.getText(), filepath);
 			} catch (Exception e1) {
