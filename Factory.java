@@ -16,7 +16,17 @@ public class Factory {
 	private int size;
 	private int capacity;
 	private double lft;// load factor threshold
+	
+	
 	public String annualReport;
+	public ArrayList<String> farmIDListAnnual;
+	public ArrayList<Double> totalWeightAnnual;
+	public ArrayList<Double> PercentageAnnual;
+
+	public String monthlyReport;
+	public ArrayList<String> farmIDListMonthly;
+	public ArrayList<Double> totalWeightMonthly;
+	public ArrayList<Double> PercentageMonthly;
 
 	/**
 	 * Default Constructor
@@ -217,12 +227,20 @@ public class Factory {
 	public void getAnnualReport(int yr) {
 
 		String annualReport = "";
+		ArrayList<String> farmIDList = new ArrayList<String>();
+		ArrayList<Double> totalWeightList = new ArrayList<Double>();
+		ArrayList<Double> percentageList = new ArrayList<Double>();
+		
 		for (int i = 0; i < farmTable.length; i++) {
 			if (farmTable[i] != null) {
 				for (int j = 0; j < farmTable[i].size(); j++) {
 					double[][] list = farmTable[i].get(j).get(yr);
-					annualReport = farmTable[i].get(j).getFarmID() + " " + "TotalWeight: "
-							+ yrWeight(list) + "; Percent of Total Weight: "
+					farmIDList.add(farmTable[i].get(j).getFarmID());
+					totalWeightList.add(yrWeight(list));
+					percentageList.add(yrWeight(list) / totalWeightYr(yr));
+					
+					annualReport = annualReport + farmTable[i].get(j).getFarmID() + " "
+							+ "TotalWeight: " + yrWeight(list) + "; Percent of Total Weight: "
 							+ yrWeight(list) / totalWeightYr(yr) + "\n";
 
 				}
@@ -230,7 +248,74 @@ public class Factory {
 		}
 
 		this.annualReport = annualReport;
+		farmIDListAnnual = farmIDList;
+		totalWeightAnnual = totalWeightList;
+		PercentageAnnual = percentageList;
+		
+
+		System.out.println(this.annualReport);
 
 	}
+
+	private double monthWeight(double[] list) {
+
+		double sum = 0.0;
+		for (int i = 0; i < list.length; i++) {
+			sum = sum + list[i];
+		}
+		return sum;
+	}
+
+	private double totalWeightMonth(int yr, int month) {
+
+		double sum = 0.0;
+		for (int i = 0; i < farmTable.length; i++) {
+			if (farmTable[i] != null) {
+				for (int j = 0; j < farmTable[i].size(); j++) {
+					double[] list = farmTable[i].get(j).getMonth(yr, month);
+					sum = sum + monthWeight(list);
+
+				}
+			}
+		}
+		return sum;
+	}
+
+	public void getMonthlyReport(int yr, int month) {
+
+		ArrayList<String> farmIDList = new ArrayList<String>();
+		ArrayList<Double> totalWeightList = new ArrayList<Double>();
+		ArrayList<Double> percentageList = new ArrayList<Double>();
+		String monthlyReport = "";
+		double total = totalWeightMonth(yr, month);
+
+		for (int i = 0; i < farmTable.length; i++) {
+			if (farmTable[i] != null) {
+				for (int j = 0; j < farmTable[i].size(); j++) {
+					double[] list = farmTable[i].get(j).getMonth(yr, month);
+					farmIDList.add(farmTable[i].get(j).getFarmID());
+					totalWeightList.add((Double) monthWeight(list));
+					percentageList.add((Double) monthWeight(list) / total);
+					monthlyReport = monthlyReport + farmTable[i].get(j).getFarmID()
+							+ " TotalWeight: " + monthWeight(list) + " Percentage: "
+							+ monthWeight(list) / total + "\n";
+
+				}
+			}
+		}
+		this.monthlyReport = monthlyReport;
+		farmIDListMonthly = farmIDList;
+		totalWeightMonthly = totalWeightList;
+		PercentageMonthly = percentageList;
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 
 }
