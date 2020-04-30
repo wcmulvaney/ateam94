@@ -282,6 +282,24 @@ public class Main extends Application {
 		VBox daterange = new VBox();
 		daterange.getChildren().addAll(DateRange, labeldat, insertdat, labelenddate,
 				insertenddate, daterangebutton, backButton5);
+		
+		daterangebutton.setOnAction(e -> {
+
+			int d1 = Integer.parseInt(insertdat.getText().substring(0, 2));
+			int m1 = Integer.parseInt(insertdat.getText().substring(2, 4));
+			int y1 = Integer.parseInt(insertdat.getText().substring(4, 8));
+			int d2 = Integer.parseInt(insertenddate.getText().substring(0, 2));
+			int m2 = Integer.parseInt(insertenddate.getText().substring(2, 4));
+			int y2 = Integer.parseInt(insertenddate.getText().substring(4, 8));
+
+			factory.getdaterange(y1, m1, d1, m2, d2);
+			
+			ArrayList<String> farmIDListDR = factory.farmIDListDR;
+			ArrayList<Double> totalWeightDR = factory.totalWeightDR;
+			ArrayList<Double> PercentageDR = factory.PercentageDR;
+
+		});
+		
 
 		// Get Month Report
 		Label Monthreport = new Label("Month report");
