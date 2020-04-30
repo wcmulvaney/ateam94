@@ -32,7 +32,7 @@ public class Manager {
 //Java code to illustrate reading a 
 //CSV file line by line 
 
-  public void writeRecord(String year, String month, String day, String farmID, String weight, String filepath) {
+    public void writeRecord(String year, String month, String day, String farmID, String weight, String filepath) {
     String temp = " temp.csv";
     String thisdate = year + "-" + month + "-" + day;
     File Oldfile = new File(filepath);
@@ -47,7 +47,7 @@ public class Manager {
       while(inputStream.hasNext()) {
         String data = inputStream.nextLine();
         String[] values = data.split(",");
-     if( counter >0) {
+       {
        String[] date = values[0].split("-");
        if(date[0].equals(year)&&date[1].equals(month)&&date[2].equals(day)&&values[1].equals(farmID)) {
          pw.println(thisdate + "," + farmID + "," + weight); 
@@ -56,11 +56,11 @@ public class Manager {
          pw.println(data);
        }
     }
-     counter = counter +1;
+    
       }
     
        inputStream.close();
-       counter = 0;
+       
       pw.flush();
       pw.close();
 
