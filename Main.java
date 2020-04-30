@@ -60,8 +60,6 @@ public class Main extends Application {
 
 	private static Manager manager;
 	private static Factory factory;
-	private static TableView<FarmMonth> table1 = new TableView<FarmMonth>();
-	private static TableView<FarmAnnual> table2 = new TableView<FarmAnnual>();
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -191,26 +189,51 @@ public class Main extends Application {
 
 		buttonFR.setOnAction(e -> {
 			try {
-				String input = farmData(farmID.getText(),
-						Integer.parseInt(yr.getText()));
-				if (input == null) {
+				Farm currentFarm;
+				if((currentFarm = factory.get(promptID.getText())) == null) {
 					vbox1.getChildren().add(invalid);
-				} else if (!checkBox1.isSelected()) {
+				}
+				// if they do nort check box
+				else if (!checkBox1.isSelected()) {
+					table.getItems().clear();
 					TableColumn monthColumn = new TableColumn("Month");
 					monthColumn.setCellValueFactory(
 							new PropertyValueFactory<Month, String>("month"));
 
+					// Total weight column of table
 					TableColumn totalColumn = new TableColumn("Total Weight");
 					totalColumn.setCellValueFactory(
 							new PropertyValueFactory<Month, String>("totalWeight"));
-					if (table.getItems().size() == 0) {
-						table.getColumns().addAll(monthColumn, totalColumn);
-						table.setItems(FXCollections.observableArrayList(
-								new Month(1, 50, 5), new Month(1, 50, 5), new Month(1, 50, 5)));
+					
+					// Percentage column of table
+					TableColumn percentageColumn = new TableColumn("Percentage");
+					totalColumn.setCellValueFactory(
+							new PropertyValueFactory<Month, String>("percentage"));
+					
+					// Find the total of the year (for percentage purposes
+					int total = 0;
+					for(int i = 0; i < 12; i++) {
+						for(int j = 0; j < 31; j++)
+							total += currentFarm.get(Integer.parseInt(yr.getText()))[i][j];
 					}
-					vbox1.getChildren().add(table);
+					// Add columns to table
+						table.getColumns().addAll(monthColumn, totalColumn, percentageColumn);
+						// Create new list to be added
+						ObservableList<Month> list = FXCollections.observableArrayList();
+					//Add all items to list
+						for(int i = 0; i < 12; i++) {
+							int monthlyTotal = 0;
+							for(int j = 0; j < 31; j++) {
+								monthlyTotal += currentFarm.get(Integer.parseInt(yr.getText()))[i][j];
+							}
+							list.add(new Month(i + 1, monthlyTotal,total));
+						}
+							
+						table.setItems(list);
+						
+						vbox1.getChildren().add(table);
 				} else {
-					manager.outputmonth(farmID.getText(), yr.getText());
+						manager.outputmonth(farmID.getText(), yr.getText());
 				}
 
 			} catch (Exception f) {
@@ -250,23 +273,6 @@ public class Main extends Application {
 		daterange.getChildren().addAll(DateRange, labeldat, insertdat, labelenddate,
 				insertenddate, daterangebutton, backButton5);
 
-		daterangebutton.setOnAction(e -> {
-
-			int d1 = Integer.parseInt(insertdat.getText().substring(0, 2));
-			int m1 = Integer.parseInt(insertdat.getText().substring(2, 4));
-			int y1 = Integer.parseInt(insertdat.getText().substring(4, 8));
-			int d2 = Integer.parseInt(insertenddate.getText().substring(0, 2));
-			int m2 = Integer.parseInt(insertenddate.getText().substring(2, 4));
-			int y2 = Integer.parseInt(insertenddate.getText().substring(4, 8));
-
-			factory.getdaterange(y1, m1, d1, m2, d2);
-			
-			ArrayList<String> farmIDListDR = factory.farmIDListDR;
-			ArrayList<Double> totalWeightDR = factory.totalWeightDR;
-			ArrayList<Double> PercentageDR = factory.PercentageDR;
-
-		});
-
 		// Get Month Report
 		Label Monthreport = new Label("Month report");
 		TextField insertyearep = new TextField();
@@ -281,12 +287,12 @@ public class Main extends Application {
 				labelmonrep, month1, monthReportButton, checkBox2, backButton6);
 
 		monthReportButton.setOnAction(e -> {
-
 			try {
 				// Table that will hold month information
 				factory.getMonthlyReport(Integer.parseInt(insertyearep.getText()),
 						Integer.parseInt(month1.getValue()));
-
+				
+				TableView<FarmMonth> table1 = new TableView<FarmMonth>();
 				// If user has not selected box print table
 				if (!checkBox2.isSelected()) {
 					// First column
@@ -335,13 +341,14 @@ public class Main extends Application {
 		VBox yearDisplay = new VBox();
 		yearDisplay.getChildren().addAll(Annualreport, labelyearep1, insertyearep1,
 				annualReportButton, checkBox3, backButton7);
-
+		
 		annualReportButton.setOnAction(e -> {
 			try {
 				// Table that will hold month information
-				// get Year information
+		//		get Year information
 				//
-
+				
+				TableView<FarmAnnual> table2 = new TableView<FarmAnnual>();
 				// If user has not selected box print table
 				if (!checkBox3.isSelected()) {
 					// First column
@@ -361,8 +368,9 @@ public class Main extends Application {
 
 					table2.getItems().clear();
 					table2.getColumns().addAll(idColumn, totalColumn, percentageColumn);
-
-					// Get list for annual
+					
+					
+					//Get list for annual
 					factory.getAnnualReport(Integer.parseInt(insertyearep1.getText()));
 					ArrayList<String> farmIDListAnnual = factory.farmIDListAnnual;
 					ArrayList<Double> totalWeightAnnual = factory.totalWeightAnnual;
@@ -377,7 +385,7 @@ public class Main extends Application {
 					table2.setItems(list);
 					yearDisplay.getChildren().add(table2);
 				} else {
-					// manager.(farmID.getText(), yr.getText());
+		// 			manager.(farmID.getText(), yr.getText());
 				}
 			} catch (Exception f) {
 
@@ -460,7 +468,7 @@ public class Main extends Application {
 			this.month = Integer.toString(month);
 			this.totalWeight = Integer.toString(totalWeight);
 			this.total = total;
-			this.percentage = "";
+			this.percentage = Double.toString(1.0 * totalWeight/total);
 		}
 
 		/**
