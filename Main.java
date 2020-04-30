@@ -141,14 +141,12 @@ public class Main extends Application {
 		fileAdd.setBottom(backButton1);
 
 		
-        
         // Edit File Page
         Label fileEditHeader = new Label("Edit File");
         TextField farmid = new TextField();
         Label farmis = new Label("Farm ID");
         // Year field
-        TextField filepath = new TextField();
-        Label filep = new Label("File path");
+   
         // Year field
         TextField year = new TextField();
         Label yearLabel = new Label("Year:");
@@ -167,17 +165,22 @@ public class Main extends Application {
         String[] dateArray = new String[31];
         for (int i = 0; i < 31; i++)
             dateArray[i] = "" + (i + 1);
-
-    
+        String filepath = year.getText()+"-"+  month.getText()+".csv";
         editFileButton.setOnAction( e->{
-          manager.writeRecord(year.getText(),  month.getText(), date.getText(), farmid.getText(),weight.getText(), filepath.getText());
+          try { manager.writeRecord(year.getText(),  month.getText(), date.getText(), farmid.getText(),weight.getText(), filepath);
+        }
+          catch (Exception e1) {
+            // TODO Auto-generated catch block
+            fileText.getChildren().add(fileNotFound);
+        }
         });
         VBox dateInsert = new VBox();
-        dateInsert.getChildren().addAll(filep,filepath,farmis, farmid,yearLabel, year, monthLabel, month, dateLabel, date, weightLabel, weight,editFileButton);
+        dateInsert.getChildren().addAll(farmis, farmid,yearLabel, year, monthLabel, month, dateLabel, date, weightLabel, weight,editFileButton);
         BorderPane fileEdit = new BorderPane();
         fileEdit.setTop(fileEditHeader);
         fileEdit.setCenter(dateInsert);
         fileEdit.setBottom(backButton2);
+
 
 		// Farm Report
 		Label title1 = new Label("Get Farm Report");
