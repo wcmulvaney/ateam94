@@ -60,6 +60,9 @@ public class Main extends Application {
 
 	private static Manager manager;
 	private static Factory factory;
+	private static TableView<FarmAnnual> table3 = new TableView<FarmAnnual>();
+	private static TableView<FarmAnnual> table2 = new TableView<FarmAnnual>();
+	private static TableView<FarmMonth> table1 = new TableView<FarmMonth>();
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -142,48 +145,48 @@ public class Main extends Application {
 		fileAdd.setTop(fileHeader);
 		fileAdd.setBottom(backButton1);
 
-	  // Edit File Page
-      Label fileEditHeader = new Label("Edit File");
-      TextField farmid = new TextField();
-      Label farmis = new Label("Farm ID");
-      // Year field
- 
-      // Year field
-      TextField year = new TextField();
-      Label yearLabel = new Label("Year:");
-      // Create a drop-down ComboBox
-      TextField month = new TextField();;
-      Label monthLabel = new Label("Month:");
-      TextField date = new TextField();
-      Label dateLabel = new Label("Date:");
-      TextField weight = new TextField();
-      Label weightLabel = new Label("Weight:");
-      Button editFileButton = new Button("Edit");
-      // Month and date drop down
-      String[] monthArray = new String[12];
-      for (int i = 0; i < 12; i++)
-          monthArray[i] = "" + (i + 1);
-      String[] dateArray = new String[31];
-      for (int i = 0; i < 31; i++)
-          dateArray[i] = "" + (i + 1);
-      
-      
-      editFileButton.setOnAction( e->{
-        String filepath = year.getText()+"-"+  month.getText()+".csv";
-        System.out.print(filepath);
-        try { manager.writeRecord(year.getText(),  month.getText(), date.getText(), farmid.getText(),weight.getText(), filepath);
-      }
-        catch (Exception e1) {
-          // TODO Auto-generated catch block
-          fileText.getChildren().add(fileNotFound);
-      }
-      });
-      VBox dateInsert = new VBox();
-      dateInsert.getChildren().addAll(farmis, farmid,yearLabel, year, monthLabel, month, dateLabel, date, weightLabel, weight,editFileButton);
-      BorderPane fileEdit = new BorderPane();
-      fileEdit.setTop(fileEditHeader);
-      fileEdit.setCenter(dateInsert);
-      fileEdit.setBottom(backButton2);
+		// Edit File Page
+		Label fileEditHeader = new Label("Edit File");
+		TextField farmid = new TextField();
+		Label farmis = new Label("Farm ID");
+		// Year field
+
+		// Year field
+		TextField year = new TextField();
+		Label yearLabel = new Label("Year:");
+		// Create a drop-down ComboBox
+		TextField month = new TextField();
+		;
+		Label monthLabel = new Label("Month:");
+		TextField date = new TextField();
+		Label dateLabel = new Label("Date:");
+		TextField weight = new TextField();
+		Label weightLabel = new Label("Weight:");
+		Button editFileButton = new Button("Edit");
+		// Month and date drop down
+		String[] monthArray = new String[12];
+		for (int i = 0; i < 12; i++)
+			monthArray[i] = "" + (i + 1);
+		String[] dateArray = new String[31];
+		for (int i = 0; i < 31; i++)
+			dateArray[i] = "" + (i + 1);
+		String filepath = year.getText() + "-" + month.getText() + ".csv";
+		editFileButton.setOnAction(e -> {
+			try {
+				manager.writeRecord(year.getText(), month.getText(), date.getText(),
+						farmid.getText(), weight.getText(), filepath);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				fileText.getChildren().add(fileNotFound);
+			}
+		});
+		VBox dateInsert = new VBox();
+		dateInsert.getChildren().addAll(farmis, farmid, yearLabel, year, monthLabel,
+				month, dateLabel, date, weightLabel, weight, editFileButton);
+		BorderPane fileEdit = new BorderPane();
+		fileEdit.setTop(fileEditHeader);
+		fileEdit.setCenter(dateInsert);
+		fileEdit.setBottom(backButton2);
 
 		// Farm Report
 		Label title1 = new Label("Get Farm Report");
@@ -198,16 +201,26 @@ public class Main extends Application {
 				checkBox1, backButton3);
 		Label invalid = new Label("Invalid farm ID");
 
-		TableView<Month> table = new TableView();
+		TableView table = new TableView();
 
 		buttonFR.setOnAction(e -> {
+
+			if (vbox1.getChildren().contains(invalid)) {
+				vbox1.getChildren().remove(invalid);
+			}
+
+			Farm currentFarm;
 			try {
-				Farm currentFarm;
-				if((currentFarm = factory.get(promptID.getText())) == null) {
+
+				// (currentFarm = factory.get(promptID.getText())) == null
+				if (!factory.contains(farmID.getText().trim())) {
 					vbox1.getChildren().add(invalid);
 				}
 				// if they do nort check box
 				else if (!checkBox1.isSelected()) {
+
+					currentFarm = factory.get(farmID.getText());
+					table.getColumns().clear();
 					table.getItems().clear();
 					TableColumn monthColumn = new TableColumn("Month");
 					monthColumn.setCellValueFactory(
@@ -217,36 +230,39 @@ public class Main extends Application {
 					TableColumn totalColumn = new TableColumn("Total Weight");
 					totalColumn.setCellValueFactory(
 							new PropertyValueFactory<Month, String>("totalWeight"));
-					
+
 					// Percentage column of table
 					TableColumn percentageColumn = new TableColumn("Percentage");
-					totalColumn.setCellValueFactory(
+					percentageColumn.setCellValueFactory(
 							new PropertyValueFactory<Month, String>("percentage"));
-					
+
 					// Find the total of the year (for percentage purposes
-					int total = 0;
-					for(int i = 0; i < 12; i++) {
-						for(int j = 0; j < 31; j++)
-							total += currentFarm.get(Integer.parseInt(yr.getText()))[i][j];
+					double total = 0;
+					for (int i = 0; i < 12; i++) {
+						for (int j = 0; j < 31; j++)
+							total += currentFarm.getDate(Integer.parseInt(yr.getText()),
+									i + 1, j + 1);
 					}
 					// Add columns to table
-						table.getColumns().addAll(monthColumn, totalColumn, percentageColumn);
-						// Create new list to be added
-						ObservableList<Month> list = FXCollections.observableArrayList();
-					//Add all items to list
-						for(int i = 0; i < 12; i++) {
-							int monthlyTotal = 0;
-							for(int j = 0; j < 31; j++) {
-								monthlyTotal += currentFarm.get(Integer.parseInt(yr.getText()))[i][j];
-							}
-							list.add(new Month(i + 1, monthlyTotal,total));
+					table.getColumns().addAll(monthColumn, totalColumn, percentageColumn);
+					// Create new list to be added
+					ObservableList<Month> list = FXCollections.observableArrayList();
+					// Add all items to list
+					
+					for (int i = 0; i < 12; i++) {
+						double monthlyTotal = 0.0;
+						for (int j = 0; j < 31; j++) {
+							monthlyTotal += currentFarm
+									.getDate(Integer.parseInt(yr.getText()), i + 1, j + 1);
 						}
-							
-						table.setItems(list);
-						
-						vbox1.getChildren().add(table);
+						list.add(new Month(i + 1, monthlyTotal, total));
+					}
+
+					table.setItems(list);
+
+					vbox1.getChildren().add(table);
 				} else {
-						manager.outputmonth(farmID.getText(), yr.getText());
+					manager.outputmonth(farmID.getText(), yr.getText());
 				}
 
 			} catch (Exception f) {
@@ -281,58 +297,68 @@ public class Main extends Application {
 		TextField insertenddate = new TextField();
 		Label labelenddate = new Label("Enter End Date");
 		Button daterangebutton = new Button("Get report!");
-		TableView<FarmAnnual> table3 = new TableView();
 		VBox daterange = new VBox();
 		daterange.getChildren().addAll(DateRange, labeldat, insertdat, labelenddate,
 				insertenddate, daterangebutton, backButton5);
 		Label invalid4 = new Label("Invalid farmID or date range");
-		
-		daterangebutton.setOnAction(e -> { try {
 
-			int d1 = Integer.parseInt(insertdat.getText().substring(0, 2));
-			int m1 = Integer.parseInt(insertdat.getText().substring(2, 4));
-			int y1 = Integer.parseInt(insertdat.getText().substring(4, 8));
-			int d2 = Integer.parseInt(insertenddate.getText().substring(0, 2));
-			int m2 = Integer.parseInt(insertenddate.getText().substring(2, 4));
-			int y2 = Integer.parseInt(insertenddate.getText().substring(4, 8));
+		ObservableList<FarmAnnual> list1 = FXCollections.observableArrayList();
+		daterangebutton.setOnAction(e -> {
+			try {
 
-			factory.getdaterange(y1, m1, d1, m2, d2);
-			
-			ArrayList<String> farmIDListDR = factory.farmIDListDR;
-			ArrayList<Double> totalWeightDR = factory.totalWeightDR;
-			ArrayList<Double> PercentageDR = factory.PercentageDR;
-			
-			TableColumn idColumn = new TableColumn("FarmID");
-			idColumn.setCellValueFactory(
-					new PropertyValueFactory<Month, String>("farmID"));
-			// Second column
-			TableColumn totalColumn = new TableColumn("Total Weight");
-			totalColumn.setCellValueFactory(
-					new PropertyValueFactory<Month, String>("totalWeight"));
+				list1.clear();
+				if (daterange.getChildren().contains(invalid4)) {
+					daterange.getChildren().remove(invalid4);
+				}
+				if (daterange.getChildren().contains(table3)) {
+					daterange.getChildren().remove(table3);
+				}
 
-			// Third column
-			TableColumn percentageColumn = new TableColumn("Percentage");
-			percentageColumn.setCellValueFactory(
-					new PropertyValueFactory<FarmMonth, String>("percentage"));
-			
-			table3.getItems().clear();
-			
-			table3.getColumns().addAll(idColumn, totalColumn, percentageColumn);
-			
-			for(int i = 0; i < farmIDListDR.size(); i++) {
-				table3.getItems().add(
-						new FarmAnnual(farmIDListDR.get(i), totalWeightDR.get(i), PercentageDR.get(i)));
-				
+				int d1 = Integer.parseInt(insertdat.getText().substring(0, 2));
+				int m1 = Integer.parseInt(insertdat.getText().substring(2, 4));
+				int y1 = Integer.parseInt(insertdat.getText().substring(4, 8));
+				int d2 = Integer.parseInt(insertenddate.getText().substring(0, 2));
+				int m2 = Integer.parseInt(insertenddate.getText().substring(2, 4));
+				int y2 = Integer.parseInt(insertenddate.getText().substring(4, 8));
+
+				factory.getdaterange(y1, m1, d1, m2, d2);
+
+				ArrayList<String> farmIDListDR = factory.farmIDListDR;
+				ArrayList<Double> totalWeightDR = factory.totalWeightDR;
+				ArrayList<Double> PercentageDR = factory.PercentageDR;
+
+				TableColumn idColumn = new TableColumn("FarmID");
+				idColumn.setCellValueFactory(
+						new PropertyValueFactory<Month, String>("farmID"));
+				// Second column
+				TableColumn totalColumn = new TableColumn("Total Weight");
+				totalColumn.setCellValueFactory(
+						new PropertyValueFactory<Month, String>("totalWeight"));
+
+				// Third column
+				TableColumn percentageColumn = new TableColumn("Percentage");
+				percentageColumn.setCellValueFactory(
+						new PropertyValueFactory<FarmMonth, String>("percentage"));
+
+				table3.getItems().clear();
+				table3.getColumns().clear();
+
+				table3.getColumns().addAll(idColumn, totalColumn, percentageColumn);
+
+				// Add all farms monthly reports
+				for (int i = 0; i < farmIDListDR.size(); i++) {
+					list1.add(new FarmAnnual(farmIDListDR.get(i), totalWeightDR.get(i),
+							PercentageDR.get(i)));
+				}
+				table3.setItems(list1);
+
+				daterange.getChildren().add(table3);
+
+			} catch (Exception f) {
+				daterange.getChildren().add(invalid4);
 			}
-			
-			daterange.getChildren().add(table3);
-			
-		} catch(Exception f) {
-			daterange.getChildren().add(invalid4);
-		}
 
 		});
-		
 
 		// Get Month Report
 		Label Monthreport = new Label("Month report");
@@ -347,16 +373,14 @@ public class Main extends Application {
 		VBox monthDisplay = new VBox();
 		monthDisplay.getChildren().addAll(Monthreport, labelyearep, insertyearep,
 				labelmonrep, month1, monthReportButton, checkBox2, backButton6);
-		TableView<FarmMonth> table1 = new TableView<FarmMonth>();
 		monthReportButton.setOnAction(e -> {
-			if(monthDisplay.getChildren().contains(invalid2))
+			if (monthDisplay.getChildren().contains(invalid2))
 				monthDisplay.getChildren().remove(invalid2);
 			try {
 				// Table that will hold month information
 				factory.getMonthlyReport(Integer.parseInt(insertyearep.getText()),
 						Integer.parseInt(month1.getValue()));
-				
-				
+
 				// If user has not selected box print table
 				if (!checkBox2.isSelected()) {
 					// First column
@@ -375,6 +399,7 @@ public class Main extends Application {
 					// If it has not been added yet
 
 					table1.getItems().clear();
+					table1.getColumns().clear();
 					table1.getColumns().addAll(idColumn, totalColumn, percentageColumn);
 					ArrayList<String> farmIDListMonth = factory.farmIDListMonthly;
 					ArrayList<Double> totalWeightMonth = factory.totalWeightMonthly;
@@ -403,17 +428,15 @@ public class Main extends Application {
 		Button annualReportButton = new Button("Get Report!");
 		CheckBox checkBox3 = new CheckBox("Create File");
 		VBox yearDisplay = new VBox();
-		TableView<FarmAnnual> table2 = new TableView<FarmAnnual>();
 		yearDisplay.getChildren().addAll(Annualreport, labelyearep1, insertyearep1,
 				annualReportButton, checkBox3, backButton7);
-		
+
 		annualReportButton.setOnAction(e -> {
 			try {
 				// Table that will hold month information
-		//		get Year information
+				// get Year information
 				//
-				
-				
+
 				// If user has not selected box print table
 				if (!checkBox3.isSelected()) {
 					// First column
@@ -432,10 +455,10 @@ public class Main extends Application {
 					// If it has not been added yet
 
 					table2.getItems().clear();
+					table2.getColumns().clear();
 					table2.getColumns().addAll(idColumn, totalColumn, percentageColumn);
-					
-					
-					//Get list for annual
+
+					// Get list for annual
 					factory.getAnnualReport(Integer.parseInt(insertyearep1.getText()));
 					ArrayList<String> farmIDListAnnual = factory.farmIDListAnnual;
 					ArrayList<Double> totalWeightAnnual = factory.totalWeightAnnual;
@@ -445,15 +468,15 @@ public class Main extends Application {
 					// Add all farms monthly reports
 					for (int i = 0; i < farmIDListAnnual.size(); i++) {
 						list.add(new FarmAnnual(farmIDListAnnual.get(i),
-								PercentageAnnual.get(i), totalWeightAnnual.get(i)));
+								totalWeightAnnual.get(i), PercentageAnnual.get(i)));
 					}
 					table2.setItems(list);
 					yearDisplay.getChildren().add(table2);
 				} else {
-		// 			
-		//    Make file instead			
-		//			
-		//			manager.(farmID.getText(), yr.getText());
+					//
+					// Make file instead
+					//
+					// manager.(farmID.getText(), yr.getText());
 				}
 			} catch (Exception f) {
 
@@ -530,13 +553,11 @@ public class Main extends Application {
 		String month;
 		String totalWeight;
 		String percentage;
-		int total;
 
-		public Month(int month, int totalWeight, int total) {
+		public Month(int month, double monthlyTotal, double total) {
 			this.month = Integer.toString(month);
-			this.totalWeight = Integer.toString(totalWeight);
-			this.total = total;
-			this.percentage = Double.toString(1.0 * totalWeight/total);
+			this.totalWeight = Double.toString(monthlyTotal);
+			this.percentage = Double.toString(1.0 * monthlyTotal / total);
 		}
 
 		/**
@@ -581,19 +602,6 @@ public class Main extends Application {
 			this.percentage = percentage;
 		}
 
-		/**
-		 * @return the total
-		 */
-		public int getTotal() {
-			return total;
-		}
-
-		/**
-		 * @param total the total to set
-		 */
-		public void setTotal(int total) {
-			this.total = total;
-		}
 
 	}
 }
