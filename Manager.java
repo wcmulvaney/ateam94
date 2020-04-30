@@ -30,7 +30,11 @@ public class Manager {
       counter =0;
       revise = false;
   }
-  
+   /**
+   * Constructor to create a factory object. Takes in a String that can be used to 
+   * identify farm.
+   * @param farmID
+   */
   public Manager(Factory fac){
     monthcounter=0;
     yearcounter=0;
@@ -38,39 +42,46 @@ public class Manager {
       counter =0;
       revise = false;
   }
-//Java code to illustrate reading a 
-//CSV file line by line 
+
+   /**
+   *Java code to illustrate reading a 
+   * CSV file line by line 
+   * @param farmID
+   */
 public void readDataLineByLine(String input) throws Exception   { 
     
    
      try { 
-       
+         
          // Create an object of filereader 
          // class with CSV file as a parameter. 
        File file = new File(input);
        Scanner inputStream = new Scanner(file);
        while(inputStream.hasNext()) {
+         //  when there are more line
          String data = inputStream.nextLine();
-         
+         // get information
          String[] values = data.split(",");
+         // split to a string arrry
       if( counter >0) {
-        String[] date = values[0].split("-");
-
-       
-        
+        String[] date = values[0].split("-");     
         int year = Integer.parseInt(date[0]);
         int month = Integer.parseInt(date[1]);
         int day = Integer.parseInt(date[2]);
         if( year>2021|| year <1900|| month>12||month<1||day>31||day<1) {
+          // if the formait is invalid break
           System.out.print("error input!"); 
           break;
         }
        if(factory.get(values[1])==null) {
+         // if farm hasn't been add to the data add to data
          factory.add(values[1]);
          factory.get(values[1]).add(year,month,day,Double.parseDouble(values[2]));
+         
       
        }
        else {
+         // if farm id exist add more information
          factory.get(values[1]).add(year,month,day,Double.parseDouble(values[2]));
 
        }
