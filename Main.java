@@ -312,10 +312,60 @@ public class Main extends Application {
 		TextField insertyearep1 = new TextField();
 		Label labelyearep1 = new Label("Enter Years(int)");
 		Button annualReportButton = new Button("Get Report!");
-
+		CheckBox checkBox3 = new CheckBox("Create File");
 		VBox yearDisplay = new VBox();
 		yearDisplay.getChildren().addAll(Annualreport, labelyearep1, insertyearep1,
-				annualReportButton, backButton7);
+				annualReportButton, checkBox3, backButton7);
+		
+		annualReportButton.setOnAction(e -> {
+			try {
+				// Table that will hold month information
+		//		get Year information
+				//
+				
+				TableView<FarmAnnual> table2 = new TableView<FarmAnnual>();
+				// If user has not selected box print table
+				if (!checkBox3.isSelected()) {
+					// First column
+					TableColumn idColumn = new TableColumn("FarmID");
+					idColumn.setCellValueFactory(
+							new PropertyValueFactory<Month, String>("farmID"));
+					// Second column
+					TableColumn totalColumn = new TableColumn("Total Weight");
+					totalColumn.setCellValueFactory(
+							new PropertyValueFactory<Month, String>("totalWeight"));
+
+					// Third column
+					TableColumn percentageColumn = new TableColumn("Percentage");
+					percentageColumn.setCellValueFactory(
+							new PropertyValueFactory<FarmMonth, String>("percentage"));
+					// If it has not been added yet
+
+					table2.getItems().clear();
+					table2.getColumns().addAll(idColumn, totalColumn, percentageColumn);
+					
+					
+					//Get list for annual
+					factory.getAnnualReport(Integer.parseInt(insertyearep1.getText()));
+					ArrayList<String> farmIDListAnnual = factory.farmIDListAnnual;
+					ArrayList<Double> totalWeightAnnual = factory.totalWeightAnnual;
+					ArrayList<Double> PercentageAnnual = factory.PercentageAnnual;
+					ObservableList<FarmAnnual> list = FXCollections.observableArrayList();
+
+					// Add all farms monthly reports
+					for (int i = 0; i < farmIDListAnnual.size(); i++) {
+						list.add(new FarmAnnual(farmIDListAnnual.get(i),
+								PercentageAnnual.get(i), totalWeightAnnual.get(i)));
+					}
+					table2.setItems(list);
+					yearDisplay.getChildren().add(table2);
+				} else {
+		// 			manager.(farmID.getText(), yr.getText());
+				}
+			} catch (Exception f) {
+
+			}
+		});
 
 		// Main layout is Border Pane example (top,left,center,right,bottom)
 		BorderPane root = new BorderPane();
@@ -394,7 +444,6 @@ public class Main extends Application {
 			this.totalWeight = Integer.toString(totalWeight);
 			this.total = total;
 			this.percentage = "";
-
 		}
 
 		/**
