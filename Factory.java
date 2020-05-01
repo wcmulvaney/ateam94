@@ -6,7 +6,7 @@
 // Author:yinzhou zhang (your name)
 // xiaoyang song
 // William Mulvaney
-// Email: yzhang2286@wisc.edu (your @wisc.edu email address)
+// Email: yzhang2286@wisc.edu, xsong65@wisc.edu
 // description :
 // Students who get help from sources other than their partner must fully
 // acknowledge and credit those sources of help here. Instructors and TAs do
@@ -24,19 +24,25 @@ import java.util.ArrayList;
 
 /**
  * This class enables us to add Farm to the Factory using a hashtable and also
- * retrieve data from the factory.
+ * retrieve data from the factory. In addition, this classes generates the
+ * corresponding lists which contains information of annual, monthly and dae
+ * range reports.
  * 
  * @author Xiaoyang Song
  *
  */
 public class Factory {
 
+	// those private fields are information related the the internal data
+	// structure: hashtable.
 	private double totalWeight;
 	private ArrayList<Farm>[] farmTable;
 	private int size;
 	private int capacity;
 	private double lft;// load factor threshold
 
+	// those public fields of this class are the lists and string that contains
+	// the reports of each type.
 	public String annualReport;
 	public ArrayList<String> farmIDListAnnual;
 	public ArrayList<Double> totalWeightAnnual;
@@ -177,6 +183,17 @@ public class Factory {
 	}
 
 	/**
+	 * check whether the factory contains the farm with certain farmID
+	 * 
+	 * @param farmID - to be checked
+	 * @return true if it contains, false otherwise.
+	 */
+	public boolean contains(String farmID) {
+
+		return contains(farmTable, farmID);
+	}
+
+	/**
 	 * This method gets the reference of certain farm in the factory. Return null
 	 * if the farm does not exist.
 	 * 
@@ -185,8 +202,7 @@ public class Factory {
 	 */
 	public Farm get(String farmID) {
 
-		if (farmTable[hashing(farmID)] != null
-				&& farmTable[hashing(farmID)].size() != 0) {
+		if (contains(farmTable, farmID)) {
 			for (int j = 0; j < farmTable[hashing(farmID)].size(); j++) {
 
 				if (farmTable[hashing(farmID)].get(j).getFarmID().equals(farmID)) {
@@ -222,7 +238,13 @@ public class Factory {
 		return false;
 	}
 
-	public double yrWeight(double[][] list) {
+	/**
+	 * helper method to determine the weight of a farm in a given year
+	 * 
+	 * @param list - list of informations
+	 * @return weight of a farm
+	 */
+	private double yrWeight(double[][] list) {
 
 		double sum = 0.0;
 		for (int i = 0; i < list.length; i++) {
@@ -233,7 +255,14 @@ public class Factory {
 		return sum;
 	}
 
-	public double totalWeightYr(int yr) {
+	/**
+	 * helper method to determine the total weight produced by the factory in a
+	 * given year
+	 * 
+	 * @param yr - year
+	 * @return - total weights produced by the factory
+	 */
+	private double totalWeightYr(int yr) {
 
 		double sum = 0.0;
 		for (int i = 0; i < farmTable.length; i++) {
@@ -248,6 +277,11 @@ public class Factory {
 		return sum;
 	}
 
+	/**
+	 * This methods enables the user to get the annual report of a given year.
+	 * 
+	 * @param yr - year
+	 */
 	public void getAnnualReport(int yr) {
 
 		String annualReport = "";
@@ -255,6 +289,7 @@ public class Factory {
 		ArrayList<Double> totalWeightList = new ArrayList<Double>();
 		ArrayList<Double> percentageList = new ArrayList<Double>();
 
+		// use for loop to iterate through each farm.
 		for (int i = 0; i < farmTable.length; i++) {
 			if (farmTable[i] != null) {
 				for (int j = 0; j < farmTable[i].size(); j++) {
@@ -271,15 +306,22 @@ public class Factory {
 			}
 		}
 
+		// set the fields
 		this.annualReport = annualReport;
 		farmIDListAnnual = farmIDList;
 		totalWeightAnnual = totalWeightList;
 		PercentageAnnual = percentageList;
-
-		System.out.println(this.annualReport);
+		sort(farmIDListAnnual, totalWeightAnnual, PercentageAnnual);
 
 	}
 
+	/**
+	 * private helper method to determine the weight produced by a farm in a
+	 * single month
+	 * 
+	 * @param list - list of weight
+	 * @return - the total weight produced
+	 */
 	private double monthWeight(double[] list) {
 
 		double sum = 0.0;
@@ -289,6 +331,14 @@ public class Factory {
 		return sum;
 	}
 
+	/**
+	 * Helper method to calculate the total weight produced in a month by the
+	 * factory
+	 * 
+	 * @param yr    - year
+	 * @param month - month
+	 * @return - total weight produced
+	 */
 	private double totalWeightMonth(int yr, int month) {
 
 		double sum = 0.0;
@@ -304,6 +354,13 @@ public class Factory {
 		return sum;
 	}
 
+	/**
+	 * This method enables the user to get the month report of a given month in a
+	 * specific year.
+	 * 
+	 * @param yr    - year
+	 * @param month - month
+	 */
 	public void getMonthlyReport(int yr, int month) {
 
 		ArrayList<String> farmIDList = new ArrayList<String>();
@@ -330,9 +387,18 @@ public class Factory {
 		farmIDListMonthly = farmIDList;
 		totalWeightMonthly = totalWeightList;
 		PercentageMonthly = percentageList;
+		sort(farmIDListMonthly, totalWeightMonthly, PercentageMonthly);
 
 	}
 
+	/**
+	 * this method makes the date range report for users
+	 * 
+	 * @param yr     - year
+	 * @param month  - month
+	 * @param date   - date
+	 * @param month1 - month1 - day1
+	 */
 	public void getdaterange(int yr, int month, int date, int month1, int day1) {
 
 		String annualReport = "";
@@ -385,16 +451,54 @@ public class Factory {
 			}
 		}
 
-		this.annualReport = annualReport;
-		farmIDListAnnual = farmIDList;
-		totalWeightAnnual = totalWeightList;
-		PercentageAnnual = percentageList;
-
-		System.out.println(this.annualReport);
-
 		this.DRReport = DRReport;
 		farmIDListDR = farmIDList;
 		totalWeightDR = totalWeightList;
 		PercentageDR = percentageList;
+		sort(farmIDListDR, totalWeightDR, PercentageDR);
 	}
+
+	/**
+	 * seletion sort to sort 3 list.
+	 * 
+	 * @param list1 - list1 to be sorted
+	 * @param list2 - list2
+	 * @param list3 - list3
+	 */
+	public void sort(ArrayList<String> list1, ArrayList<Double> list2,
+			ArrayList<Double> list3) {
+		int n = list1.size();
+
+		for (int i = 0; i < n; i++) {
+			if (list1.get(i).length() != 8) {
+				list1.set(i, "Farm 0" + list1.get(i).substring(5, 7));
+			}
+		}
+
+		// One by one move boundary of unsorted subarray
+		for (int i = 0; i < n - 1; i++) {
+			// Find the minimum element in unsorted array
+			int min = i;
+			for (int j = i + 1; j < n; j++)
+
+				if (list1.get(j).compareTo(list1.get(min)) < 0) {
+					min = j;
+				}
+			// Swap the found minimum element with the first
+			// element
+			String temp = list1.get(min);
+			list1.set(min, list1.get(i));
+			list1.set(i, temp);
+
+			Double temp1 = list2.get(min);
+			list2.set(min, list2.get(i));
+			list2.set(i, temp1);
+
+			Double temp2 = list3.get(min);
+			list3.set(min, list3.get(i));
+			list3.set(i, temp2);
+		}
+
+	}
+
 }
